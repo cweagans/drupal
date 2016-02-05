@@ -7,6 +7,15 @@
 
 namespace Drupal\Core\Entity;
 
+use Drupal\Core\Entity\Event\EntityDeleteEvent;
+use Drupal\Core\Entity\Event\EntityEvent;
+use Drupal\Core\Entity\Event\EntityInsertedEvent;
+use Drupal\Core\Entity\Event\EntityInsertEvent;
+use Drupal\Core\Entity\Event\EntityPredeleteEvent;
+use Drupal\Core\Entity\Event\EntityPresaveEvent;
+use Drupal\Core\Entity\Event\EntityRevisionDeleteEvent;
+use Drupal\Core\Entity\Event\EntityUpdatedEvent;
+use Drupal\Core\Entity\Event\EntityUpdateEvent;
 use Drupal\Core\Entity\Query\QueryInterface;
 
 /**
@@ -172,6 +181,32 @@ abstract class EntityStorageBase extends EntityHandlerBase implements EntityStor
     $this->moduleHandler()->invokeAll($this->entityTypeId . '_' . $hook, array($entity));
     // Invoke the respective entity-level hook.
     $this->moduleHandler()->invokeAll('entity_' . $hook, array($entity));
+    // Dispatch the appropriate entity events.
+    $this->dispatchEntityEvent($hook, $entity);
+  }
+
+  /**
+   * Dispatches events for content entity hooks.
+   *
+   * @param string $hook
+   *   The name of the operation being performed on the entity.
+   * @param \Drupal\Core\Entity\EntityInterface $entity
+   *   The entity object.
+   */
+  protected function dispatchEntityEvent($hook, EntityInterface $entity) {
+    // Get an instance of the entity class appropriate for $hook.
+    switch ($hook) {
+      case 'presave': $event = new EntityPresaveEvent($entity); break;
+      case 'insert': $event = new EntityInsertEvent($entity); break;
+      case 'update': $event = new EntityUpdateEvent($entity); break;
+      case 'predelete': $event = new EntityPredeleteEvent($entity); break;
+      case 'delete': $event = new EntityDeleteEvent($entity); break;
+      case 'revision_delete': $event = new EntityRevisionDeleteEvent($entity); break;
+      default: $event = new EntityEvent($entity); break;
+    }
+
+    // Dispatch the event.
+    $this->eventDispatcher()->dispatch('entity.' . $hook, $event);
   }
 
   /**
