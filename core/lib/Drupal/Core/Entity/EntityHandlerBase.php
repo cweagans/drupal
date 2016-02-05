@@ -10,6 +10,7 @@ namespace Drupal\Core\Entity;
 use Drupal\Core\DependencyInjection\DependencySerializationTrait;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
  * Provides a base class for entity handlers.
@@ -29,6 +30,13 @@ abstract class EntityHandlerBase {
    * @var \Drupal\Core\Extension\ModuleHandlerInterface
    */
   protected $moduleHandler;
+
+  /**
+   * The event dispatcher to use for emitting events.
+   *
+   * @var \Symfony\Component\EventDispatcher\EventDispatcherInterface
+   */
+  protected $eventDispatcher;
 
   /**
    * Gets the module handler.
@@ -53,6 +61,32 @@ abstract class EntityHandlerBase {
    */
   public function setModuleHandler(ModuleHandlerInterface $module_handler) {
     $this->moduleHandler = $module_handler;
+    return $this;
+  }
+
+  /**
+   * Gets the event dispatcher.
+   *
+   * @return \Symfony\Component\EventDispatcher\EventDispatcherInterface
+   *   The event dispatcher
+   */
+  protected function eventDispatcher() {
+    if (!$this->eventDispatcher) {
+      $this->eventDispatcher = \Drupal::service('event_dispatcher');
+    }
+    return $this->eventDispatcher;
+  }
+
+  /**
+   * Sets the event dispatcher for this handler
+   *
+   * @param \Symfony\Component\EventDispatcher\EventDispatcherInterface
+   *   The event dispatcher
+   *
+   * @return $this
+   */
+  public function setEventDispatcher(EventDispatcherInterface $event_dispatcher) {
+    $this->eventDispatcher = $event_dispatcher;
     return $this;
   }
 
