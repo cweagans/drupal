@@ -14,6 +14,7 @@ use Drupal\Core\Entity\Sql\SqlContentEntityStorage;
 use Drupal\Core\Language\Language;
 use Drupal\Tests\UnitTestCase;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\EventDispatcher\EventDispatcher;
 
 /**
  * @coversDefaultClass \Drupal\Core\Entity\Sql\SqlContentEntityStorage
@@ -101,6 +102,7 @@ class SqlContentEntityStorageTest extends UnitTestCase {
       ->will($this->returnValue($this->entityTypeId));
 
     $this->container = new ContainerBuilder();
+    $this->container->set('event_dispatcher', new EventDispatcher());
     \Drupal::setContainer($this->container);
 
     $this->entityManager = $this->getMock('Drupal\Core\Entity\EntityManagerInterface');

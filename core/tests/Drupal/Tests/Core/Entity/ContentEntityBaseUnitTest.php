@@ -14,6 +14,7 @@ use Drupal\Core\Field\BaseFieldDefinition;
 use Drupal\Core\Language\LanguageInterface;
 use Drupal\Tests\UnitTestCase;
 use Drupal\Core\Language\Language;
+use Symfony\Component\EventDispatcher\EventDispatcher;
 
 /**
  * @coversDefaultClass \Drupal\Core\Entity\ContentEntityBase
@@ -177,6 +178,7 @@ class ContentEntityBaseUnitTest extends UnitTestCase {
     $container->set('typed_data_manager', $this->typedDataManager);
     $container->set('language_manager', $this->languageManager);
     $container->set('plugin.manager.field.field_type', $this->fieldTypePluginManager);
+    $container->set('event_dispatcher', new EventDispatcher());
     \Drupal::setContainer($container);
 
     $this->fieldDefinitions = array(

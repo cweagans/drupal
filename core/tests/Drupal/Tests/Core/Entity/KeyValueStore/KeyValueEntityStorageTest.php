@@ -13,6 +13,7 @@ use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Language\Language;
 use Drupal\Tests\UnitTestCase;
 use Drupal\Core\Entity\KeyValueStore\KeyValueEntityStorage;
+use Symfony\Component\EventDispatcher\EventDispatcher;
 
 /**
  * @coversDefaultClass \Drupal\Core\Entity\KeyValueStore\KeyValueEntityStorage
@@ -132,6 +133,7 @@ class KeyValueEntityStorageTest extends UnitTestCase {
     $container->set('entity.manager', $this->entityManager);
     $container->set('language_manager', $this->languageManager);
     $container->set('cache_tags.invalidator', $this->cacheTagsInvalidator);
+    $container->set('event_dispatcher', new EventDispatcher());
     \Drupal::setContainer($container);
   }
 
